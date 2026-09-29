@@ -32,7 +32,7 @@ One log per team, kept in the root of your GitHub repository and updated as you 
 | # | Date | Role | What the AI claimed or produced (short quote or summary) | Category | Verified? (yes / no / partially) | How you checked it (source, test, experiment) | Team member |
 |---|------|------|-----------------------------------------------------------|----------|----------------------------------|-----------------------------------------------|-------------|
 | 1 | 9/28/2026| Reviewer | A markdown version of the AI Audit document. | OK | yes | Opened the .md file in VS Code and viewed it. | John Mattes |
-| 2 | | | | | | | |
+| 2 | 9/28/2026| Student Researcher | Ideas for further investigation on the chosen topic | OK | Yes | Compared the idea with the paper's multiclass classification problem and verified that class weights can be used during training to achieve desired results | Kai Jones |
 | 3 | | | | | | | |
 | 4 | | | | | | | |
 | 5 | | | | | | | |
