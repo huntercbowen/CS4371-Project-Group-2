@@ -8,6 +8,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train and evaluate a CNN for network intrusion detection.")
     parser.add_argument("--class_config", type=int, choices=[2, 6, 19], default=2,
                         help="Number of classes for classification (2, 6, or 19)")
+    parser.add_argument("--max_rows_per_file", type=int, default=None,
+                        help="Maximum CSV rows per file for development testing")
     args = parser.parse_args()
 
     # Get the absolute path of the directory where this script is located 
@@ -17,7 +19,7 @@ if __name__ == "__main__":
 
     # Pass data_dir to the function:
     X_train, X_val, X_test, y_train_categorical, y_val_categorical, y_test_categorical, label_encoder = load_and_preprocess_data(
-        data_dir, args.class_config)  # Pass data_dir here 
+        data_dir, args.class_config, max_rows_per_file=args.max_rows_per_file)  # Pass data_dir here 
 
     input_shape = (X_train.shape[1], 1) 
     model = create_cnn_model(input_shape, y_train_categorical.shape[1])

@@ -5,7 +5,10 @@ from file_manager import (
     TRAIN_DIR,
     recover_temp,
     temporarily_withhold,
+    ROOT_DIR
 )
+import subprocess
+import sys
 
 # Display name -> original dataset filename prefix
 TARGET_ATTACKS = {
@@ -87,6 +90,32 @@ def select_attack(attacks):
 
     return attack_name, files
 
+def run_cnn(class_config=2, max_rows_per_file=1000):
+    """Execute the original CNN training and evaluation script."""
+    script_path = ROOT_DIR / "src" / "main.py"
+
+    command = [
+        sys.executable,
+        str(script_path),
+        "--class_config",
+        str(class_config)
+    ]
+
+    if max_rows_per_file is not None:
+        command.extend([
+            "--max_rows_per_file",
+            str(max_rows_per_file)
+        ])
+
+    print("\nStarting CNN training...", flush=True)
+
+    subprocess.run(
+        command,
+        cwd=ROOT_DIR,
+        check=True
+    )
+
+    print("\nCNN experiment completed.", flush=True)
 
 def main():
     recover_temp()
@@ -116,10 +145,24 @@ def main():
             if selection is not None:
                 attack_name, files = selection
 
-                with temporarily_withhold(files):
-                    print(f"\nCurrently withholding: {attack_name}")
+                confirm = input(
+                    f"\nRun CNN with {attack_name} withheld? (y/n): "
+                ).strip().lower()
 
-                    input("Press Enter to restore the files...")
+                if confirm != "y":
+                    print("Experiment cancelled.")
+                    continue
+
+                try:
+                    with temporarily_withhold(files):
+                        run_cnn(class_config=2)
+
+                except subprocess.CalledProcessError as error:
+                    print(
+                        f"\nCNN training failed "
+                        f"(exit code {error.returncode})."
+                    )
+                    print("Check the error output above.")
 
         else:
             print("Unknown command.")
