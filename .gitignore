@@ -1,0 +1,21 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Dataset
+data/**/*.csv
+data/.temp/
+data/**/*.pcap
+data/**/*.zip
+
+# Generated experiment results
+results/
+
+# Saved models
+*.keras
+*.h5
+
+# Local configuration
+.env
