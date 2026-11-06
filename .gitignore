@@ -11,7 +11,9 @@ data/**/*.pcap
 data/**/*.zip
 
 # Generated experiment results
-results/
+results/**
+!results/**/
+!results/**/.gitkeep
 
 # Saved models
 *.keras
