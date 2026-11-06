@@ -1,12 +1,11 @@
 from pathlib import Path
 import re
-
-
-# Directory configuration
-ROOT_DIR = Path(__file__).resolve().parent.parent
-TRAIN_DIR = ROOT_DIR / "data" / "train"
-TEMP_DIR = ROOT_DIR / "data" / ".temp"
-
+import re
+from file_manager import (
+    TRAIN_DIR,
+    recover_temp,
+    temporarily_withhold,
+)
 
 # Display name -> original dataset filename prefix
 TARGET_ATTACKS = {
@@ -21,25 +20,6 @@ TARGET_ATTACKS = {
     "MQTT-DDoS-Connect_Flood": "MQTT-DDoS-Connect_Flood",
     "Recon-Port_Scan": "Recon-Port_Scan",
 }
-
-
-def recover_temp():
-    """Restore any CSV files left in the temporary directory."""
-    TRAIN_DIR.mkdir(parents=True, exist_ok=True)
-    TEMP_DIR.mkdir(parents=True, exist_ok=True)
-
-    for file in sorted(TEMP_DIR.glob("*.csv")):
-        destination = TRAIN_DIR / file.name
-
-        if destination.exists():
-            raise FileExistsError(
-                f"Cannot restore {file.name}: "
-                "destination already exists."
-            )
-
-        file.rename(destination)
-        print(f"Recovered: {file.name}")
-
 
 def get_attack_files(prefix):
     """Find every training CSV belonging to an attack type."""
@@ -131,7 +111,15 @@ def main():
             display_attacks(attacks)
 
         elif command == "2":
-            select_attack(attacks)
+            selection = select_attack(attacks)
+
+            if selection is not None:
+                attack_name, files = selection
+
+                with temporarily_withhold(files):
+                    print(f"\nCurrently withholding: {attack_name}")
+
+                    input("Press Enter to restore the files...")
 
         else:
             print("Unknown command.")
