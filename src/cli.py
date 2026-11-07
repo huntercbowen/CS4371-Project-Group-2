@@ -9,6 +9,7 @@ from file_manager import (
 )
 import subprocess
 import sys
+from datetime import datetime, timezone
 
 # Display name -> original dataset filename prefix
 TARGET_ATTACKS = {
@@ -90,15 +91,30 @@ def select_attack(attacks):
 
     return attack_name, files
 
-def run_cnn(class_config=2, max_rows_per_file=1000):
-    """Execute the original CNN training and evaluation script."""
+def run_cnn(class_config=2, max_rows_per_file=1000, hidden_attack=None):
+    """Execute the original CNN training and evaluation script, and save results."""
     script_path = ROOT_DIR / "src" / "main.py"
+
+    # Give each experiment its own unique directory
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
+
+    attack_name = re.sub(r"[^A-Za-z0-9_-]", "_", hidden_attack or "baseline")
+
+    run_name = f"{timestamp}_{attack_name}"
+
+    output_dir = (
+        ROOT_DIR / "results" / "csv" / run_name
+    )
 
     command = [
         sys.executable,
         str(script_path),
         "--class_config",
-        str(class_config)
+        str(class_config),
+        "--results_dir",
+        str(output_dir),
+        "--hidden_attack",
+        hidden_attack or "none",
     ]
 
     if max_rows_per_file is not None:
@@ -116,6 +132,8 @@ def run_cnn(class_config=2, max_rows_per_file=1000):
     )
 
     print("\nCNN experiment completed.", flush=True)
+
+    return output_dir
 
 def main():
     recover_temp()
@@ -155,7 +173,7 @@ def main():
 
                 try:
                     with temporarily_withhold(files):
-                        run_cnn(class_config=2)
+                        run_cnn(class_config=2, hidden_attack=attack_name)
 
                 except subprocess.CalledProcessError as error:
                     print(

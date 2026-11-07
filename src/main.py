@@ -3,6 +3,7 @@ import argparse
 from data_loader import load_and_preprocess_data
 from model import create_cnn_model, train_model
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
+from results_exporter import export_results
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train and evaluate a CNN for network intrusion detection.")
@@ -10,6 +11,11 @@ if __name__ == "__main__":
                         help="Number of classes for classification (2, 6, or 19)")
     parser.add_argument("--max_rows_per_file", type=int, default=None,
                         help="Maximum CSV rows per file for development testing")
+    parser.add_argument("--results_dir", type=str, default=None,
+                        help="Directory for exported experiment results")
+    parser.add_argument("--hidden_attack", type=str, default=None,
+                        help="Attack type withheld from training")
+
     args = parser.parse_args()
 
     # Get the absolute path of the directory where this script is located 
@@ -53,3 +59,15 @@ if __name__ == "__main__":
     print("F1-Score:", f1)
     print("\nClassification Report:\n", classification_report(y_test_decoded, y_pred))
     print("\nConfusion Matrix:\n", confusion_matrix(y_test_decoded, y_pred))
+   
+    # Export experiment results if an output directory is provided
+    if args.results_dir is not None:
+        export_results(
+            output_dir=args.results_dir,
+            hidden_attack=args.hidden_attack,
+            class_config=args.class_config,
+            max_rows_per_file=args.max_rows_per_file,
+            y_true=y_test_decoded,
+            y_pred=y_pred,
+            labels=label_encoder.classes_,
+        )
