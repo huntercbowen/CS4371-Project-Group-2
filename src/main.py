@@ -6,6 +6,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train and evaluate a CNN for network intrusion detection.")
+    parser.add_argument("--hidden_attack", type=str, default=None, help="Name of the hidden attack type")
     parser.add_argument("--class_config", type=int, choices=[2, 6, 19], default=2,
                         help="Number of classes for classification (2, 6, or 19)")
     parser.add_argument("--max_rows_per_file", type=int, default=None,
