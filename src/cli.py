@@ -155,7 +155,7 @@ def main():
 
                 try:
                     with temporarily_withhold(files):
-                        run_cnn(class_config=2)
+                        run_cnn(class_config=19)
 
                 except subprocess.CalledProcessError as error:
                     print(
