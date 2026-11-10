@@ -90,13 +90,15 @@ def select_attack(attacks):
 
     return attack_name, files
 
-def run_cnn(class_config=2, max_rows_per_file=1000):
+def run_cnn(attack_name, class_config=2, max_rows_per_file=1000):
     """Execute the original CNN training and evaluation script."""
     script_path = ROOT_DIR / "src" / "main.py"
 
     command = [
         sys.executable,
         str(script_path),
+        "--hidden_attack",
+        attack_name,
         "--class_config",
         str(class_config)
     ]
@@ -155,7 +157,8 @@ def main():
 
                 try:
                     with temporarily_withhold(files):
-                        run_cnn(class_config=19)
+                        # Specifies the name of the attack to hide & which task to run.
+                        run_cnn(attack_name, class_config=19)
 
                 except subprocess.CalledProcessError as error:
                     print(
