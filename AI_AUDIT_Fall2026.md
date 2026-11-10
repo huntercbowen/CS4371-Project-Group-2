@@ -34,7 +34,7 @@ One log per team, kept in the root of your GitHub repository and updated as you 
 | 1 | 9/28/2026| Reviewer | A markdown version of the AI Audit document. | OK | yes | Opened the .md file in VS Code and viewed it. | John Mattes |
 | 2 | 9/28/2026| Student Researcher | Ideas for further investigation on the chosen topic | OK | Yes | Compared the idea with the paper's multiclass classification problem and verified that class weights can be used during training to achieve desired results | Kai Jones |
 | 3 | 9/28/2026 | Student Researcher | An idea to improve the CNN model via further feature engineering and per-class metrics rather than aggregate metrics. | OK | Yes | Towards the end of their paper, the authors also mention that future studies based off of their work could be improved by further feature engineering for the CNN model to better realize more niche attack variants. | John Mattes |
-| 4 | | | | | | | |
+| 4 | 10/30/2026| Student Researcher | An idea to hide attack types that the model performed well with from the training set to see if the model can still identify them as attacks versus as benign. | OK | Yes | We verified which classes the model recommended to hide which were the ones that the model had great success in labeling correctly when testing. | John Mattes |
 | 5 | | | | | | | |
 | 6 | | | | | | | |
 | 7 | | | | | | | |
