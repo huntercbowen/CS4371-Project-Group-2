@@ -19,7 +19,7 @@ if __name__ == "__main__":
     data_dir = os.path.join(script_dir, '..', 'data') 
 
     # Pass data_dir to the function:
-    X_train, X_val, X_test, y_train_categorical, y_val_categorical, y_test_categorical, label_encoder = load_and_preprocess_data(
+    X_train, X_val, X_test, y_train_categorical, y_val_categorical, y_test_categorical, label_encoder, test_labels, known_attack_mask = load_and_preprocess_data(
         data_dir, args.class_config, max_rows_per_file=args.max_rows_per_file)  # Pass data_dir here 
 
     input_shape = (X_train.shape[1], 1) 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     model = train_model(model, X_train, y_train_categorical, X_val, y_val_categorical)
 
-    loss, accuracy = model.evaluate(X_test, y_test_categorical)
+    loss, accuracy = model.evaluate(X_test[known_attack_mask], y_test_categorical)
     print(f"Test Loss: {loss:.4f}")
     print(f"Test Accuracy: {accuracy:.4f}")
 
@@ -41,16 +41,22 @@ if __name__ == "__main__":
     y_pred_encoded = y_pred_categorical.argmax(axis=1)
     y_pred = label_encoder.inverse_transform(y_pred_encoded)
 
-    y_test_decoded = label_encoder.inverse_transform(y_test_categorical.argmax(axis=1))
+    # Uses mask to store only the test rows whose class was visible in the train set.
+    y_test_known = test_labels[known_attack_mask]
+    y_pred_known = y_pred[known_attack_mask]
 
-    accuracy = accuracy_score(y_test_decoded, y_pred)
-    precision = precision_score(y_test_decoded, y_pred, average='weighted')
-    recall = recall_score(y_test_decoded, y_pred, average='weighted')
-    f1 = f1_score(y_test_decoded, y_pred, average='weighted')
+    # Calculates & prints accuracy, precision, recall, f1 scores.
+    accuracy = accuracy_score(y_test_known, y_pred_known)
+    precision = precision_score(y_test_known, y_pred_known, average='weighted')
+    recall = recall_score(y_test_known, y_pred_known, average='weighted')
+    f1 = f1_score(y_test_known, y_pred_known, average='weighted')
 
     print("Accuracy:", accuracy)
     print("Precision:", precision)
     print("Recall:", recall)
     print("F1-Score:", f1)
-    print("\nClassification Report:\n", classification_report(y_test_decoded, y_pred))
-    print("\nConfusion Matrix:\n", confusion_matrix(y_test_decoded, y_pred))
+    print("\nClassification Report:\n", classification_report(y_test_known, y_pred_known))
+    print("\nConfusion Matrix:\n", confusion_matrix(y_test_known, y_pred_known))
+
+    # Calculates & prints detection rate, prediction breakdown metrics.
+    

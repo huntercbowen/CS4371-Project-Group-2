@@ -103,7 +103,7 @@ def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
     y_test = test_df['Attack_Type']
 
     # Stores the attack types of test entries as a numpy array of strings.
-    test_attack_labels = y_test.to_numpy(dtype=str)
+    test_labels = y_test.to_numpy(dtype=str)
 
     # Creates a new label encoder & encodes the train set.
     label_encoder = LabelEncoder()
@@ -112,7 +112,7 @@ def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
     # Determines if an attack type in "y_test" was hidden (False) or present (True) in the training set.
     known_attack_mask = []
 
-    for label in test_attack_labels:
+    for label in test_labels:
         if label in label_encoder.classes_:
             known_attack_mask.append(True)
         else:
@@ -122,7 +122,7 @@ def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
     known_attack_mask = np.array(known_attack_mask)
 
     # Encodes the test set.
-    y_test_encoded = label_encoder.transform(test_attack_labels[known_attack_mask])
+    y_test_encoded = label_encoder.transform(test_labels[known_attack_mask])
 
     # Stores the number of classes the encoder found.
     num_classes = len(label_encoder.classes_)
@@ -143,4 +143,4 @@ def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
     X_val = X_val.reshape(X_val.shape[0], X_val.shape[1], 1)
     X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], 1)
 
-    return X_train, X_val, X_test, y_train_categorical, y_val_categorical, y_test_categorical, label_encoder, test_attack_labels, known_attack_mask
+    return X_train, X_val, X_test, y_train_categorical, y_val_categorical, y_test_categorical, label_encoder, test_labels, known_attack_mask
