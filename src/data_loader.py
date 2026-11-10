@@ -118,6 +118,9 @@ def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
         else:
             known_attack_mask.append(False)
 
+    # Converts "known_attack_mask" to a numpy array for consistency.
+    known_attack_mask = np.array(known_attack_mask)
+
     # Encodes the test set.
     y_test_encoded = label_encoder.transform(test_attack_labels[known_attack_mask])
 
