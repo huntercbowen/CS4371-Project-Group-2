@@ -1,5 +1,6 @@
 import os
 import argparse
+import tensorflow as tf
 from data_loader import load_and_preprocess_data
 from model import create_cnn_model, train_model
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
@@ -25,7 +26,6 @@ if __name__ == "__main__":
     input_shape = (X_train.shape[1], 1) 
     model = create_cnn_model(input_shape, y_train_categorical.shape[1])
 
-    import tensorflow as tf 
     if tf.test.gpu_device_name():
         print('GPU is available!')
     else:
