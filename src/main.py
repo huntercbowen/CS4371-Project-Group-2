@@ -1,6 +1,7 @@
 import os
 import argparse
 import tensorflow as tf
+import matplotlib.pyplot as plt
 from data_loader import load_and_preprocess_data
 from model import create_cnn_model, train_model
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
@@ -97,7 +98,27 @@ if __name__ == "__main__":
             print(f"Detection Rate: {not_benign_count} / {total_hidden_attacks} ({detection_rate:.2%})")
             print("Prediction Breakdown:")
 
-            for class_name in sorted(prediction_breakdown.keys(), reverse = True):
+            
+
+            for class_name in sorted(prediction_breakdown.keys()):
                 print(f"\t{class_name}: {prediction_breakdown[class_name]} ({prediction_breakdown[class_name] / total_hidden_attacks:.2%})")
+
+            # ------------- Matplotlib -------------
+            classNames = list(prediction_breakdown.keys()) #            - Class Names
+            values = list(prediction_breakdown.values())#               - Their integer values
+            plt.figure(figsize=(9,5))#                                  - Size of Entire window
+            barInfo = plt.barh(classNames, values,)#                    - Function creates the graph based on input values
+            plt.bar_label(barInfo, padding = 2)#                        - Displays value to the right of its respective Class Name
+            plt.xlabel('Number of Predictions')#                        - Label for x axis
+            plt.ylabel('Predicted Attack Type')#                        - Label for y axis
+            plt.subplots_adjust(left=0.30)#                             - Adds a bit of space to the left margin for class names
+            plt.title(f'Prediction breakdown for {args.hidden_attack}')#- Sets title for entire graph
+            plt.xlim(0, max(values) * 1.10)#                            - Extends graph based on the highest value to avoid overlap
+            plt.show()#                                                 - Displays Graph
+            # Note: 'show()' function will pause our cli input flow until graph window is closed. Then continues as normal
+            # ------------- Matplotlib -------------
         else:
             print("Warning: Calculations for detection rate and prediction breakdown were skipped. No test rows found for hidden attack:", args.hidden_attack)
+
+
+
