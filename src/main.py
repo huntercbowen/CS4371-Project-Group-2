@@ -114,6 +114,10 @@ if __name__ == "__main__":
             plt.subplots_adjust(left=0.30)#                             - Adds a bit of space to the left margin for class names
             plt.title(f'Prediction breakdown for {args.hidden_attack}')#- Sets title for entire graph
             plt.xlim(0, max(values) * 1.10)#                            - Extends graph based on the highest value to avoid overlap
+            graphFolder = os.path.join(script_dir, '..', 'results', 'graphs')
+            fileName = f'Bar-Chart-{args.hidden_attack}.png'
+            filePath = os.path.join(graphFolder, fileName)
+            plt.savefig(filePath, dpi = 300, bbox_inches = 'tight')
             plt.show()#                                                 - Displays Graph
             # Note: 'show()' function will pause our cli input flow until graph window is closed. Then continues as normal
             # ------------- Matplotlib -------------
