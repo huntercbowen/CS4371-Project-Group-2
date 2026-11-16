@@ -2,6 +2,7 @@ import os
 import argparse
 import tensorflow as tf
 import matplotlib.pyplot as plt
+from datetime import datetime
 from data_loader import load_and_preprocess_data
 from model import create_cnn_model, train_model
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
@@ -114,8 +115,11 @@ if __name__ == "__main__":
             plt.subplots_adjust(left=0.30)#                             - Adds a bit of space to the left margin for class names
             plt.title(f'Prediction breakdown for {args.hidden_attack}')#- Sets title for entire graph
             plt.xlim(0, max(values) * 1.10)#                            - Extends graph based on the highest value to avoid overlap
+
+            dateTime = datetime.now().strftime('%Y-%m-%d_%H-%M')
             graphFolder = os.path.join(script_dir, '..', 'results', 'graphs')
-            fileName = f'{args.hidden_attack}-chart.png'
+            #fileName = f'{args.hidden_attack}_{dateTime}.png'
+            fileName = f'{dateTime}.png'
             filePath = os.path.join(graphFolder, fileName)
             plt.savefig(filePath, dpi = 300, bbox_inches = 'tight')
             print(f'Image {fileName} was saved to {graphFolder}')
