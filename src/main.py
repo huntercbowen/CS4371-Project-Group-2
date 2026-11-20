@@ -2,6 +2,7 @@ import os
 import argparse
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import csv
 from datetime import datetime
 from data_loader import load_and_preprocess_data
 from model import create_cnn_model, train_model
@@ -60,7 +61,8 @@ if __name__ == "__main__":
     print("F1-Score:", f1)
     print("\nClassification Report:\n", classification_report(y_test_known, y_pred_known))
     print("\nConfusion Matrix:\n", confusion_matrix(y_test_known, y_pred_known))
-
+    #This is so when we dont select an attack to hide the cvs still runs
+    detection_rate = None
     # Calculates & prints detection rate, prediction breakdown metrics if an attack was hidden.
     if args.hidden_attack is not None:
         prediction_breakdown = {} # Tracks quantity of classes that model predicted hidden attack as.
@@ -118,6 +120,7 @@ if __name__ == "__main__":
 
             dateTime = datetime.now().strftime('%Y-%m-%d_%H-%M')
             graphFolder = os.path.join(script_dir, '..', 'results', 'graphs')
+            os.makedirs(graphFolder, exist_ok=True)
             #fileName = f'{args.hidden_attack}_{dateTime}.png'
             fileName = f'{dateTime}.png'
             filePath = os.path.join(graphFolder, fileName)
@@ -128,6 +131,43 @@ if __name__ == "__main__":
             # ------------- Matplotlib -------------
         else:
             print("Warning: Calculations for detection rate and prediction breakdown were skipped. No test rows found for hidden attack:", args.hidden_attack)
+    # ------------- CSV Export -------------
 
+    csvFolder = os.path.join(script_dir, '..', 'results', 'csv')
+    os.makedirs(csvFolder, exist_ok=True)
+
+    csvPath = os.path.join(csvFolder, 'metrics.csv')
+
+    fileExists = os.path.exists(csvPath) and os.path.getsize(csvPath) > 0
+
+    with open(csvPath, 'a', newline='') as file:
+        writer = csv.writer(file)
+
+        if not fileExists:
+            writer.writerow([
+                'Timestamp',
+                'Hidden Attack',
+                'Class Config',
+                'Accuracy',
+                'Precision',
+                'Recall',
+                'F1 Score',
+                'Detection Rate'
+            ])
+
+        writer.writerow([
+            datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            args.hidden_attack if args.hidden_attack is not None else 'None',
+            args.class_config,
+            accuracy,
+            precision,
+            recall,
+            f1,
+            detection_rate
+        ])
+
+    print(f"Metrics successfully saved to {csvPath}")
+
+    # ------------- CSV Export -------------
 
 
