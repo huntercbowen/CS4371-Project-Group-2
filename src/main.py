@@ -42,10 +42,10 @@ def create_confusion_matrix_output(class_names, confusion_matrix_values) -> None
     """Create confusion matrix output and add to graphs directory."""
 
     plt.figure(figsize=(max(8, len(class_names) * 0.7), max(6, len(class_names) * 0.6)))
-    image = plt.imshow(confusion_matrix_values, interpolation="nearest", cmap=plt.cm.Blues)
+    image = plt.imshow(confusion_matrix_values, interpolation='nearest', cmap=plt.cm.Blues)
     plt.colorbar(image)
     tick_marks = range(len(class_names))
-    plt.xticks(tick_marks, class_names, rotation=45, ha="right")
+    plt.xticks(tick_marks, class_names, rotation=45, ha='right')
     plt.yticks(tick_marks, class_names)
     threshold = confusion_matrix_values.max() / 2
 
@@ -55,24 +55,24 @@ def create_confusion_matrix_output(class_names, confusion_matrix_values) -> None
             plt.text(
                 column,
                 row,
-                format(value, "d"),
-                ha="center",
-                va="center",
-                color="white" if value > threshold else "black",
+                format(value, 'd'),
+                ha='center',
+                va='center',
+                color='white' if value > threshold else 'black',
             )
     
-    plt.xlabel("Predicted label")
-    plt.ylabel("True label")
-    plt.title("Confusion Matrix")
+    plt.xlabel('Predicted label')
+    plt.ylabel('True label')
+    plt.title('Confusion Matrix')
     plt.tight_layout()
 
-    date_time = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    graph_folder = os.path.join(script_dir, "..", "results", "graphs")
+    date_time = datetime.now().strftime('%Y-%m-%d_%H-%M')
+    graph_folder = os.path.join(script_dir, '..', 'results', 'graphs')
     os.makedirs(graph_folder, exist_ok=True)
-    file_name = f"confusion_matrix_{date_time}.png"
+    file_name = f'confusion_matrix_{date_time}.png'
     file_path = os.path.join(graph_folder, file_name)
-    plt.savefig(file_path, dpi=300, bbox_inches="tight")
-    print(f"Confusion matrix image {file_name} was saved to {graph_folder}")
+    plt.savefig(file_path, dpi=300, bbox_inches='tight')
+    print(f'Confusion matrix image {file_name} was saved to {graph_folder}')
     plt.show()
     plt.close()
 
@@ -113,16 +113,16 @@ def create_csv_output(script_dir: str) -> None:
             detection_rate
         ])
 
-    print(f"Metrics successfully saved to {csv_path}")
+    print(f'Metrics successfully saved to {csv_path}')
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Train and evaluate a CNN for network intrusion detection.")
-    parser.add_argument("--hidden_attack", type=str, default=None, help="Name of the hidden attack type")
-    parser.add_argument("--class_config", type=int, choices=[2, 6, 19], default=2,
-                        help="Number of classes for classification (2, 6, or 19)")
-    parser.add_argument("--max_rows_per_file", type=int, default=None,
-                        help="Maximum CSV rows per file for development testing")
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Train and evaluate a CNN for network intrusion detection.')
+    parser.add_argument('--hidden_attack', type=str, default=None, help='Name of the hidden attack type')
+    parser.add_argument('--class_config', type=int, choices=[2, 6, 19], default=2,
+                        help='Number of classes for classification (2, 6, or 19)')
+    parser.add_argument('--max_rows_per_file', type=int, default=None,
+                        help='Maximum CSV rows per file for development testing')
     args = parser.parse_args()
 
     # Get the absolute path of the directory where this script is located 
@@ -145,8 +145,8 @@ if __name__ == "__main__":
     model = train_model(model, X_train, y_train_categorical, X_val, y_val_categorical)
 
     loss, accuracy = model.evaluate(X_test[known_attack_mask], y_test_categorical)
-    print(f"Test Loss: {loss:.4f}")
-    print(f"Test Accuracy: {accuracy:.4f}")
+    print(f'Test Loss: {loss:.4f}')
+    print(f'Test Accuracy: {accuracy:.4f}')
 
     y_pred_categorical = model.predict(X_test)
     y_pred_encoded = y_pred_categorical.argmax(axis=1)
@@ -163,10 +163,10 @@ if __name__ == "__main__":
     recall = recall_score(y_test_known, y_pred_known, average='weighted')
     f1 = f1_score(y_test_known, y_pred_known, average='weighted')
 
-    print("Accuracy:", accuracy)
-    print("Precision:", precision)
-    print("Recall:", recall)
-    print("F1-Score:", f1)
+    print('Accuracy:', accuracy)
+    print('Precision:', precision)
+    print('Recall:', recall)
+    print('F1-Score:', f1)
 
     # Creates & prints classification report and confusion matrix.
     class_names = label_encoder.classes_
@@ -176,8 +176,8 @@ if __name__ == "__main__":
         labels=class_names,
     )
 
-    print("\nClassification Report:\n", classification_report(y_test_known, y_pred_known))
-    print("\nConfusion Matrix:\n", confusion_matrix_values)
+    print('\nClassification Report:\n', classification_report(y_test_known, y_pred_known))
+    print('\nConfusion Matrix:\n', confusion_matrix_values)
 
     # Creates the confusion matrix output.
     create_confusion_matrix_output(class_names, confusion_matrix_values)
@@ -186,7 +186,7 @@ if __name__ == "__main__":
     if args.hidden_attack is not None:
         prediction_breakdown = {} # Tracks quantity of classes that model predicted hidden attack as.
         hidden_rows_mask = [] # Stores which rows contain a hidden attack.
-        not_benign_count = 0 # Count of how many times model recognizes hidden class as an attack rather than "Benign".
+        not_benign_count = 0 # Count of how many times model recognizes hidden class as an attack rather than 'Benign'.
         total_hidden_attacks = 0 # Total number of hidden attack rows.
 
         for label in test_labels:
@@ -197,7 +197,7 @@ if __name__ == "__main__":
 
         for i in range(0, len(test_labels)):
             if hidden_rows_mask[i]:
-                # Updates "prediction_breakdown".
+                # Updates 'prediction_breakdown'.
                 if y_pred[i] in prediction_breakdown:
                     # Adds 1 to count of current class if it exists.
                     prediction_breakdown[y_pred[i]] += 1
@@ -206,7 +206,7 @@ if __name__ == "__main__":
                     prediction_breakdown.update({y_pred[i]: 1})
 
                 # Updates count of non-benign classifications.
-                if y_pred[i] != "Benign":
+                if y_pred[i] != 'Benign':
                     not_benign_count += 1
 
         for mask in hidden_rows_mask:
@@ -216,11 +216,11 @@ if __name__ == "__main__":
         # Checks if any attacks were actually hidden. Prevents division by zero.
         if total_hidden_attacks > 0:
             detection_rate = not_benign_count / total_hidden_attacks
-            print(f"Detection Rate: {not_benign_count} / {total_hidden_attacks} ({detection_rate:.2%})")
-            print("Prediction Breakdown:")
+            print(f'Detection Rate: {not_benign_count} / {total_hidden_attacks} ({detection_rate:.2%})')
+            print('Prediction Breakdown:')
 
             for class_name in sorted(prediction_breakdown.keys()):
-                print(f"\t{class_name}: {prediction_breakdown[class_name]} ({prediction_breakdown[class_name] / total_hidden_attacks:.2%})")
+                print(f'\t{class_name}: {prediction_breakdown[class_name]} ({prediction_breakdown[class_name] / total_hidden_attacks:.2%})')
 
             # Creates the bar chart output for the prediction breakdown.
             create_bar_chart_output(args.hidden_attack, prediction_breakdown, script_dir)
@@ -228,4 +228,4 @@ if __name__ == "__main__":
             # Creates the csv output.
             create_csv_output(script_dir)
         else:
-            print("Warning: Calculations for detection rate and prediction breakdown were skipped. No test rows found for hidden attack:", args.hidden_attack)
+            print('Warning: Calculations for detection rate and prediction breakdown were skipped. No test rows found for hidden attack:', args.hidden_attack)

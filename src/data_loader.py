@@ -93,8 +93,8 @@ def get_attack_category(file_name, class_config):
 
 def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
     """Load, preprocess, and prepare data for training."""
-    train_files = [f"{data_dir}/train/{f}" for f in os.listdir(f"{data_dir}/train") if f.endswith('.csv')]
-    test_files = [f"{data_dir}/test/{f}" for f in os.listdir(f"{data_dir}/test") if f.endswith('.csv')]
+    train_files = [f'{data_dir}/train/{f}' for f in os.listdir(f'{data_dir}/train') if f.endswith('.csv')]
+    test_files = [f'{data_dir}/test/{f}' for f in os.listdir(f'{data_dir}/test') if f.endswith('.csv')]
 
     train_df = pd.concat([pd.read_csv(f, nrows=max_rows_per_file).assign(file=f) for f in train_files], ignore_index=True)
     test_df = pd.concat([pd.read_csv(f, nrows=max_rows_per_file).assign(file=f) for f in test_files], ignore_index=True)
@@ -114,7 +114,7 @@ def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
     label_encoder = LabelEncoder()
     y_train_encoded = label_encoder.fit_transform(y_train)
 
-    # Determines if an attack type in "y_test" was hidden (False) or present (True) in the training set.
+    # Determines if an attack type in 'y_test' was hidden (False) or present (True) in the training set.
     known_attack_mask = []
 
     for label in test_labels:
@@ -123,7 +123,7 @@ def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
         else:
             known_attack_mask.append(False)
 
-    # Converts "known_attack_mask" to a numpy array for consistency.
+    # Converts 'known_attack_mask' to a numpy array for consistency.
     known_attack_mask = np.array(known_attack_mask)
 
     # Encodes the test set.
