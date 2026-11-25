@@ -60,9 +60,49 @@ if __name__ == "__main__":
     print("Recall:", recall)
     print("F1-Score:", f1)
     print("\nClassification Report:\n", classification_report(y_test_known, y_pred_known))
-    print("\nConfusion Matrix:\n", confusion_matrix(y_test_known, y_pred_known))
-    #This is so when we dont select an attack to hide the cvs still runs
-    detection_rate = None
+
+    class_names = label_encoder.classes_
+    confusion_matrix_values = confusion_matrix(
+        y_test_known,
+        y_pred_known,
+        labels=class_names,
+    )
+
+    print("\nConfusion Matrix:\n", confusion_matrix_values)
+
+    plt.figure(figsize=(max(8, len(class_names) * 0.7), max(6, len(class_names) * 0.6)))
+    image = plt.imshow(confusion_matrix_values, interpolation="nearest", cmap=plt.cm.Blues)
+    plt.colorbar(image)
+    tick_marks = range(len(class_names))
+    plt.xticks(tick_marks, class_names, rotation=45, ha="right")
+    plt.yticks(tick_marks, class_names)
+    threshold = confusion_matrix_values.max() / 2
+    for row in range(confusion_matrix_values.shape[0]):
+        for column in range(confusion_matrix_values.shape[1]):
+            value = confusion_matrix_values[row, column]
+            plt.text(
+                column,
+                row,
+                format(value, "d"),
+                ha="center",
+                va="center",
+                color="white" if value > threshold else "black",
+            )
+    plt.xlabel("Predicted label")
+    plt.ylabel("True label")
+    plt.title("Confusion Matrix")
+    plt.tight_layout()
+
+    date_time = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    graph_folder = os.path.join(script_dir, "..", "results", "graphs")
+    os.makedirs(graph_folder, exist_ok=True)
+    file_name = f"confusion_matrix_{date_time}.png"
+    file_path = os.path.join(graph_folder, file_name)
+    plt.savefig(file_path, dpi=300, bbox_inches="tight")
+    print(f"Confusion matrix image {file_name} was saved to {graph_folder}")
+    plt.show()
+    plt.close()
+
     # Calculates & prints detection rate, prediction breakdown metrics if an attack was hidden.
     if args.hidden_attack is not None:
         prediction_breakdown = {} # Tracks quantity of classes that model predicted hidden attack as.
