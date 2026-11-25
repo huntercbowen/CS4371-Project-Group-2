@@ -10,6 +10,7 @@ from file_manager import (
 import subprocess
 import sys
 
+
 # Display name -> original dataset filename prefix
 TARGET_ATTACKS = {
     "DDoS-ICMP": "TCP_IP-DDoS-ICMP",
@@ -23,6 +24,7 @@ TARGET_ATTACKS = {
     "MQTT-DDoS-Connect_Flood": "MQTT-DDoS-Connect_Flood",
     "Recon-Port_Scan": "Recon-Port_Scan",
 }
+
 
 def get_attack_files(prefix):
     """Find every training CSV belonging to an attack type."""
@@ -90,6 +92,7 @@ def select_attack(attacks):
 
     return attack_name, files
 
+
 def run_cnn(attack_name, class_config=2, max_rows_per_file=1000):
     """Execute the original CNN training and evaluation script."""
     script_path = ROOT_DIR / "src" / "main.py"
@@ -118,6 +121,7 @@ def run_cnn(attack_name, class_config=2, max_rows_per_file=1000):
     )
 
     print("\nCNN experiment completed.", flush=True)
+
 
 def main():
     recover_temp()

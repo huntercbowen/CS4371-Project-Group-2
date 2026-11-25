@@ -5,6 +5,7 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 import os  
 
+
 # Define attack categories
 ATTACK_CATEGORIES_19 = { 
     'ARP_Spoofing': 'Spoofing',
@@ -28,6 +29,7 @@ ATTACK_CATEGORIES_19 = {
     'Benign': 'Benign'
 }
 
+
 ATTACK_CATEGORIES_6 = {  
     'Spoofing': 'Spoofing',
     'MQTT-DDoS-Connect_Flood': 'MQTT',
@@ -49,6 +51,7 @@ ATTACK_CATEGORIES_6 = {
     'DoS-UDP': 'DoS',
     'Benign': 'Benign'
 }
+
 
 ATTACK_CATEGORIES_2 = {  
     'ARP_Spoofing': 'attack',
@@ -72,6 +75,7 @@ ATTACK_CATEGORIES_2 = {
     'Benign': 'Benign'
 }
 
+
 def get_attack_category(file_name, class_config): 
     """Get attack category from file name."""
 
@@ -85,7 +89,8 @@ def get_attack_category(file_name, class_config):
     for key in categories:
         if key in file_name:
             return categories[key]
-        
+
+
 def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
     """Load, preprocess, and prepare data for training."""
     train_files = [f"{data_dir}/train/{f}" for f in os.listdir(f"{data_dir}/train") if f.endswith('.csv')]

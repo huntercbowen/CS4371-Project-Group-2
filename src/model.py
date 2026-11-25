@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv1D, MaxPooling1D, Flatten, Dense
 
+
 def create_cnn_model(input_shape, num_classes):
     """Create and compile the CNN model."""
     model = Sequential()
@@ -15,6 +16,7 @@ def create_cnn_model(input_shape, num_classes):
 
     model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     return model
+
 
 def train_model(model, X_train, y_train_categorical, X_val, y_val_categorical, epochs=10, batch_size=32):
     """Train the CNN model."""

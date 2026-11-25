@@ -8,6 +8,7 @@ from data_loader import load_and_preprocess_data
 from model import create_cnn_model, train_model
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report, confusion_matrix
 
+
 def create_bar_chart_output(hidden_attack: str, prediction_breakdown, script_dir) -> None:
     """Create prediction breakdown bar chart and add to graphs directory."""
 
@@ -35,6 +36,7 @@ def create_bar_chart_output(hidden_attack: str, prediction_breakdown, script_dir
     plt.savefig(file_path, dpi = 300, bbox_inches = 'tight') # Saves the chart as a PNG image.
     print(f'Image {file_name} was saved to {graph_folder}')
     plt.show()
+
 
 def create_confusion_matrix_output(class_names, confusion_matrix_values) -> None:
     """Create confusion matrix output and add to graphs directory."""
@@ -74,6 +76,7 @@ def create_confusion_matrix_output(class_names, confusion_matrix_values) -> None
     plt.show()
     plt.close()
 
+
 def create_csv_output(script_dir: str) -> None:
     """Update metrics.csv with calculated metrics of each run."""
 
@@ -111,6 +114,7 @@ def create_csv_output(script_dir: str) -> None:
         ])
 
     print(f"Metrics successfully saved to {csv_path}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train and evaluate a CNN for network intrusion detection.")
