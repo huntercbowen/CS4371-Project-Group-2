@@ -4,19 +4,24 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
+
 # Dataset
-data/**
+data/.temp
 data/**/*.zip
-!data/**/
+!data/test/
+!data/train/
+
 
 # Generated experiment results
 results/**
 !results/**/
 !results/**/.gitkeep
 
+
 # Saved models
 *.keras
 *.h5
+
 
 # Local configuration
 .env
