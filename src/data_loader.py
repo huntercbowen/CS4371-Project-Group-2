@@ -79,11 +79,11 @@ ATTACK_CATEGORIES_2 = {
 def get_attack_category(file_name, class_config): 
     """Get attack category from file name."""
 
-    if class_config == 2:
+    if class_config == 2: # Binary task.
         categories = ATTACK_CATEGORIES_2
-    elif class_config == 6:
+    elif class_config == 6: # Categorical task.
         categories = ATTACK_CATEGORIES_6
-    else:  # Default to 19 classes 
+    else: # Default: Multiclassification task.
         categories = ATTACK_CATEGORIES_19  
 
     for key in categories:
@@ -91,24 +91,25 @@ def get_attack_category(file_name, class_config):
             return categories[key]
 
 
-def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
+def load_and_preprocess_data(data_dir, class_config, max_rows_per_file = None):
     """Load, preprocess, and prepare data for training."""
+
     train_files = [f'{data_dir}/train/{f}' for f in os.listdir(f'{data_dir}/train') if f.endswith('.csv')]
     test_files = [f'{data_dir}/test/{f}' for f in os.listdir(f'{data_dir}/test') if f.endswith('.csv')]
 
-    train_df = pd.concat([pd.read_csv(f, nrows=max_rows_per_file).assign(file=f) for f in train_files], ignore_index=True)
-    test_df = pd.concat([pd.read_csv(f, nrows=max_rows_per_file).assign(file=f) for f in test_files], ignore_index=True)
+    train_df = pd.concat([pd.read_csv(f, nrows = max_rows_per_file).assign(file = f) for f in train_files], ignore_index = True)
+    test_df = pd.concat([pd.read_csv(f, nrows = max_rows_per_file).assign(file = f) for f in test_files], ignore_index = True)
 
     train_df['Attack_Type'] = train_df['file'].apply(lambda x: get_attack_category(x, class_config))
     test_df['Attack_Type'] = test_df['file'].apply(lambda x: get_attack_category(x, class_config))
 
-    X_train = train_df.drop(['Attack_Type', 'file'], axis=1)
+    X_train = train_df.drop(['Attack_Type', 'file'], axis = 1)
     y_train = train_df['Attack_Type']
-    X_test = test_df.drop(['Attack_Type', 'file'], axis=1)
+    X_test = test_df.drop(['Attack_Type', 'file'], axis = 1)
     y_test = test_df['Attack_Type']
 
     # Stores the attack types of test entries as a numpy array of strings.
-    test_labels = y_test.to_numpy(dtype=str)
+    test_labels = y_test.to_numpy(dtype = str)
 
     # Creates a new label encoder & encodes the train set.
     label_encoder = LabelEncoder()
@@ -136,7 +137,7 @@ def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
     y_test_categorical = to_categorical(y_test_encoded, num_classes)
 
     X_train, X_val, y_train_categorical, y_val_categorical = train_test_split(
-        X_train, y_train_categorical, test_size=0.2, random_state=42
+        X_train, y_train_categorical, test_size = 0.2, random_state = 42
     )
 
     scaler = StandardScaler()

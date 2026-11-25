@@ -10,6 +10,7 @@ TEMP_DIR = ROOT_DIR / 'data' / '.temp'
 
 def restore_file(file):
     """Move a withheld CSV file back into the training directory."""
+    
     destination = TRAIN_DIR / file.name
 
     # Prevent accidentally overwriting an existing file
@@ -23,8 +24,9 @@ def restore_file(file):
 
 def recover_temp():
     """Recover training files left behind by an interrupted experiment."""
-    TRAIN_DIR.mkdir(parents=True, exist_ok=True)
-    TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
+    TRAIN_DIR.mkdir(parents = True, exist_ok = True)
+    TEMP_DIR.mkdir(parents = True, exist_ok = True)
 
     for file in sorted(TEMP_DIR.glob('*.csv')):
         restore_file(file)
@@ -34,7 +36,8 @@ def recover_temp():
 @contextmanager
 def temporarily_withhold(files):
     """Temporarily remove selected attack files from training."""
-    TEMP_DIR.mkdir(parents=True, exist_ok=True)
+
+    TEMP_DIR.mkdir(parents = True, exist_ok = True)
 
     files = list(files)
 

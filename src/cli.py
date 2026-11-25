@@ -11,7 +11,7 @@ import subprocess
 import sys
 
 
-# Display name -> original dataset filename prefix
+# Display name -> original dataset filename prefix.
 TARGET_ATTACKS = {
     'DDoS-ICMP': 'TCP_IP-DDoS-ICMP',
     'DDoS-SYN': 'TCP_IP-DDoS-SYN',
@@ -28,6 +28,7 @@ TARGET_ATTACKS = {
 
 def get_attack_files(prefix):
     """Find every training CSV belonging to an attack type."""
+
     pattern = re.compile(
         rf'^{re.escape(prefix)}\d*_train\.pcap\.csv$'
     )
@@ -41,6 +42,7 @@ def get_attack_files(prefix):
 
 def get_available_attacks():
     """Associate the ten selected attacks with their CSV files."""
+
     return {
         name: get_attack_files(prefix)
         for name, prefix in TARGET_ATTACKS.items()
@@ -49,6 +51,7 @@ def get_available_attacks():
 
 def display_attacks(attacks):
     """Display numbered attack types and their CSV counts."""
+
     print('\nAvailable Attack Types')
     print('----------------------')
 
@@ -63,10 +66,12 @@ def display_attacks(attacks):
 
 def select_attack(attacks):
     """Let the user select an attack type by number."""
+
     display_attacks(attacks)
 
     choice = input('\nSelect attack number: ').strip()
 
+    # Validates user input.
     if not choice.isdigit():
         print('Please enter a number.')
         return None
@@ -74,12 +79,14 @@ def select_attack(attacks):
     index = int(choice) - 1
     items = list(attacks.items())
 
+    # Validates user input.
     if not 0 <= index < len(items):
         print('Invalid selection.')
         return None
 
     attack_name, files = items[index]
 
+    # Checks if associated CSV files exist for chosen attack.
     if not files:
         print(f'No CSV files found for {attack_name}.')
         return None
@@ -90,13 +97,16 @@ def select_attack(attacks):
     for file in files:
         print(f'  - {file.name}')
 
+    # Returns the name of the chosen attack in addition to the associated CSV files.
     return attack_name, files
 
 
-def run_cnn(attack_name, class_config=2, max_rows_per_file=1000):
+def run_cnn(attack_name, class_config = 2, max_rows_per_file = 1000):
     """Execute the original CNN training and evaluation script."""
+
     script_path = ROOT_DIR / 'src' / 'main.py'
 
+    # Builds the command that will be passed to the OS.
     command = [
         sys.executable,
         str(script_path),
@@ -111,16 +121,17 @@ def run_cnn(attack_name, class_config=2, max_rows_per_file=1000):
             '--max_rows_per_file',
             str(max_rows_per_file)
         ])
-
-    print('\nStarting CNN training...', flush=True)
+    
+    # Runs the CNN model.
+    print('\nStarting CNN training...', flush = True)
 
     subprocess.run(
         command,
-        cwd=ROOT_DIR,
-        check=True
+        cwd = ROOT_DIR,
+        check = True
     )
 
-    print('\nCNN experiment completed.', flush=True)
+    print('\nCNN experiment completed.', flush = True)
 
 
 def main():
@@ -161,8 +172,8 @@ def main():
 
                 try:
                     with temporarily_withhold(files):
-                        # Specifies the name of the attack to hide & which task to run.
-                        run_cnn(attack_name, class_config=19)
+                        # Specifies argument configuration & runs the model.
+                        run_cnn(attack_name, class_config = 19)
 
                 except subprocess.CalledProcessError as error:
                     print(
