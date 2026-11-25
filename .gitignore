@@ -5,10 +5,9 @@ __pycache__/
 .pytest_cache/
 
 # Dataset
-data/**/*.csv
-data/.temp/
-data/**/*.pcap
+data/**
 data/**/*.zip
+!data/**/
 
 # Generated experiment results
 results/**
