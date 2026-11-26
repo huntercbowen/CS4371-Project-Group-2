@@ -5,6 +5,7 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 import os  
 
+
 # Define attack categories
 ATTACK_CATEGORIES_19 = { 
     'ARP_Spoofing': 'Spoofing',
@@ -28,6 +29,7 @@ ATTACK_CATEGORIES_19 = {
     'Benign': 'Benign'
 }
 
+
 ATTACK_CATEGORIES_6 = {  
     'Spoofing': 'Spoofing',
     'MQTT-DDoS-Connect_Flood': 'MQTT',
@@ -49,6 +51,7 @@ ATTACK_CATEGORIES_6 = {
     'DoS-UDP': 'DoS',
     'Benign': 'Benign'
 }
+
 
 ATTACK_CATEGORIES_2 = {  
     'ARP_Spoofing': 'attack',
@@ -72,44 +75,47 @@ ATTACK_CATEGORIES_2 = {
     'Benign': 'Benign'
 }
 
+
 def get_attack_category(file_name, class_config): 
     """Get attack category from file name."""
 
-    if class_config == 2:
+    if class_config == 2: # Binary task.
         categories = ATTACK_CATEGORIES_2
-    elif class_config == 6:
+    elif class_config == 6: # Categorical task.
         categories = ATTACK_CATEGORIES_6
-    else:  # Default to 19 classes 
+    else: # Default: Multiclassification task.
         categories = ATTACK_CATEGORIES_19  
 
     for key in categories:
         if key in file_name:
             return categories[key]
-        
-def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
-    """Load, preprocess, and prepare data for training."""
-    train_files = [f"{data_dir}/train/{f}" for f in os.listdir(f"{data_dir}/train") if f.endswith('.csv')]
-    test_files = [f"{data_dir}/test/{f}" for f in os.listdir(f"{data_dir}/test") if f.endswith('.csv')]
 
-    train_df = pd.concat([pd.read_csv(f, nrows=max_rows_per_file).assign(file=f) for f in train_files], ignore_index=True)
-    test_df = pd.concat([pd.read_csv(f, nrows=max_rows_per_file).assign(file=f) for f in test_files], ignore_index=True)
+
+def load_and_preprocess_data(data_dir, class_config, max_rows_per_file = None):
+    """Load, preprocess, and prepare data for training."""
+
+    train_files = [f'{data_dir}/train/{f}' for f in os.listdir(f'{data_dir}/train') if f.endswith('.csv')]
+    test_files = [f'{data_dir}/test/{f}' for f in os.listdir(f'{data_dir}/test') if f.endswith('.csv')]
+
+    train_df = pd.concat([pd.read_csv(f, nrows = max_rows_per_file).assign(file = f) for f in train_files], ignore_index = True)
+    test_df = pd.concat([pd.read_csv(f, nrows = max_rows_per_file).assign(file = f) for f in test_files], ignore_index = True)
 
     train_df['Attack_Type'] = train_df['file'].apply(lambda x: get_attack_category(x, class_config))
     test_df['Attack_Type'] = test_df['file'].apply(lambda x: get_attack_category(x, class_config))
 
-    X_train = train_df.drop(['Attack_Type', 'file'], axis=1)
+    X_train = train_df.drop(['Attack_Type', 'file'], axis = 1)
     y_train = train_df['Attack_Type']
-    X_test = test_df.drop(['Attack_Type', 'file'], axis=1)
+    X_test = test_df.drop(['Attack_Type', 'file'], axis = 1)
     y_test = test_df['Attack_Type']
 
     # Stores the attack types of test entries as a numpy array of strings.
-    test_labels = y_test.to_numpy(dtype=str)
+    test_labels = y_test.to_numpy(dtype = str)
 
     # Creates a new label encoder & encodes the train set.
     label_encoder = LabelEncoder()
     y_train_encoded = label_encoder.fit_transform(y_train)
 
-    # Determines if an attack type in "y_test" was hidden (False) or present (True) in the training set.
+    # Determines if an attack type in 'y_test' was hidden (False) or present (True) in the training set.
     known_attack_mask = []
 
     for label in test_labels:
@@ -118,7 +124,7 @@ def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
         else:
             known_attack_mask.append(False)
 
-    # Converts "known_attack_mask" to a numpy array for consistency.
+    # Converts 'known_attack_mask' to a numpy array for consistency.
     known_attack_mask = np.array(known_attack_mask)
 
     # Encodes the test set.
@@ -131,7 +137,7 @@ def load_and_preprocess_data(data_dir, class_config, max_rows_per_file=None):
     y_test_categorical = to_categorical(y_test_encoded, num_classes)
 
     X_train, X_val, y_train_categorical, y_val_categorical = train_test_split(
-        X_train, y_train_categorical, test_size=0.2, random_state=42
+        X_train, y_train_categorical, test_size = 0.2, random_state = 42
     )
 
     scaler = StandardScaler()
